@@ -17,6 +17,15 @@ from routes.bank_routes import bank_bp
 app.register_blueprint(auth_bp)
 app.register_blueprint(bank_bp)
 
+@app.errorhandler(Exception)
+def handle_exception(e):
+    # Pass through HTTP errors
+    from watchdog.observers import Observer # Not actually needed, just a thought
+    import traceback
+    print("!!! SERVER ERROR DETECTED !!!")
+    print(traceback.format_exc())
+    return f"Internal Server Error: {str(e)}", 500
+
 @app.route('/health')
 def health():
     return jsonify({"status": "healthy"}), 200

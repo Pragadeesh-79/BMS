@@ -49,12 +49,21 @@ class UserModel:
     def verify_password(self, email, password):
         """Verifies a user's password."""
         user = self.find_by_email(email)
-        if not user:
+        if not user or 'password_hash' not in user:
             return False
             
         password_bytes = password.encode('utf-8')
-        # bcrypt checkpw takes the plain password bytes and the hashed password bytes
-        return bcrypt.checkpw(password_bytes, user['password_hash'])
+        hashed = user['password_hash']
+        
+        # Handle cases where the hash might be stored as a string or binary
+        if isinstance(hashed, str):
+            hashed = hashed.encode('utf-8')
+            
+        try:
+            return bcrypt.checkpw(password_bytes, hashed)
+        except Exception as e:
+            print(f"Password verification error: {e}")
+            return False
 
     def update_balance(self, account_number, amount, session=None):
         """Updates the balance by adding amount. amount can be negative for deduction.
