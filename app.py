@@ -28,5 +28,15 @@ app.register_blueprint(bank_bp)
 def health():
     return jsonify({"status": "healthy"}), 200
 
+@app.route('/debug-env')
+def debug_env():
+    # Return ONLY the keys of environment variables for safety
+    keys = sorted(os.environ.keys())
+    return jsonify({
+        "environment_variable_keys_found": keys,
+        "is_mongo_uri_present": 'MONGO_URI' in os.environ,
+        "app_node": os.environ.get('VERCEL_REGION', 'local')
+    }), 200
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
