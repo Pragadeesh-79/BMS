@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-8">
+    <div class="flex items-center gap-3">
+        <a href="{{ url_for('bank.dashboard') }}"
+            style="color: white; font-size: 1.25rem; font-weight: bold; text-decoration: none; display: flex; align-items: center;">
+            <i class="ri-arrow-left-s-line"></i> Send Money
+        </a>
+    </div>
+    <div
+        style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 1.25rem;">
+        <i class="ri-notification-3-line"></i>
+    </div>
+</div>
+
+<div class="card card-dark"
+    style="max-width: 600px; margin: 0 auto; padding: 3rem; border-radius: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.15);">
+    <div class="text-center mb-8">
+        <div
+            style="width: 80px; height: 80px; background: rgba(212, 255, 0, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 2.5rem; margin: 0 auto 1.5rem;">
+            <i class="ri-send-plane-fill"></i>
+        </div>
+        <p class="text-sm font-bold text-uppercase tracking-wide"
+            style="color: rgba(255,255,255,0.6); letter-spacing: 1px;">Available Balance</p>
+        <h2 style="font-size: 3.5rem; font-weight: 800; margin-top: 0.5rem; letter-spacing: -1px; color: white;">${{
+            "%.2f"|format(user.balance) }}</h2>
+    </div>
+
+    <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 2.5rem 0;"></div>
+
+    <form action="{{ url_for('bank.transfer') }}" method="POST">
+        <div class="form-group mb-6">
+            <label for="receiver_account" class="form-label"
+                style="color: rgba(255,255,255,0.8); font-size: 0.9rem;">Recipient Account</label>
+            <div style="position: relative; display: flex; align-items: center;">
+                <div style="position: absolute; left: 1.5rem; color: var(--primary); font-size: 1.5rem;"><i
+                        class="ri-user-smile-line"></i></div>
+                <input type="text" id="receiver_account" name="receiver_account" class="form-control"
+                    placeholder="10-digit account number" pattern="\d{10}"
+                    title="Please enter a valid 10-digit account number"
+                    style="padding: 1.25rem 1.25rem 1.25rem 4rem; font-weight: 600; font-size: 1.1rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 20px;"
+                    required>
+            </div>
+        </div>
+
+        <div class="form-group mb-6">
+            <label for="amount" class="form-label"
+                style="color: rgba(255,255,255,0.8); font-size: 0.9rem;">Amount</label>
+            <div style="position: relative; display: flex; align-items: center;">
+                <div style="position: absolute; left: 1.5rem; color: var(--primary); font-size: 1.5rem;"><i
+                        class="ri-money-dollar-circle-fill"></i></div>
+                <input type="number" id="amount" name="amount" class="form-control" placeholder="0.00" step="0.01"
+                    min="0.01" max="{{ user.balance }}"
+                    style="padding: 1.25rem 1.25rem 1.25rem 4rem; font-size: 1.75rem; font-weight: 800; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--primary); border-radius: 20px;"
+                    required>
+            </div>
+        </div>
+
+        <div class="form-group mb-8">
+            <label for="description" class="form-label" style="color: rgba(255,255,255,0.8); font-size: 0.9rem;">Purpose
+                (Optional)</label>
+            <div style="position: relative; display: flex; align-items: center;">
+                <div style="position: absolute; left: 1.5rem; color: rgba(255,255,255,0.4); font-size: 1.5rem;"><i
+                        class="ri-chat-3-line"></i></div>
+                <input type="text" id="description" name="description" class="form-control"
+                    placeholder="e.g. Dinner, Rent"
+                    style="padding: 1.25rem 1.25rem 1.25rem 4rem; font-weight: 500; font-size: 1.1rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 20px;">
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full"
+            style="padding: 1.5rem; font-size: 1.25rem; font-weight: 800; border-radius: 999px; letter-spacing: 0.5px; box-shadow: 0 10px 30px rgba(212, 255, 0, 0.2);">
+            Confirm Transfer
+        </button>
+    </form>
+</div>
+{% endblock %}

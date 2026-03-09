@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <div class="flex items-center gap-3">
+        <a href="{{ url_for('bank.dashboard') }}"
+            style="color: white; font-size: 1.25rem; font-weight: bold; text-decoration: none; display: flex; align-items: center;">
+            <i class="ri-arrow-left-s-line"></i> Lending
+        </a>
+    </div>
+    <div
+        style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 1.25rem;">
+        <i class="ri-notification-3-line"></i>
+    </div>
+</div>
+
+<!-- Active Debt / Loan Summary Card -->
+<div class="card card-green"
+    style="margin-bottom: 2rem; padding: 2.25rem; border-radius: 36px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: space-between; min-height: 220px;">
+    <!-- Large Immersive Oval Background matching reference -->
+    <div
+        style="position: absolute; top: -15%; right: 2%; width: 220px; height: 280px; background: rgba(255,255,255,0.35); border-radius: 120px; z-index: 1;">
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 0.5rem; position: relative; z-index: 2;">
+        <div
+            style="width: 72px; height: 72px; background: #111111; border-radius: 24px; display: flex; align-items: center; justify-content: center; color: white; margin-bottom: 0.5rem; font-size: 2rem; box-shadow: 0 8px 20px rgba(0,0,0,0.15);">
+            <i class="ri-briefcase-line"></i>
+        </div>
+        <h3 style="font-weight: 900; font-size: 1.5rem; color: #111111; margin: 0; letter-spacing: -0.5px;">My Debt</h3>
+
+        {% set active_loans = loans | selectattr("status", "equalto", "Active") | list %}
+        {% if active_loans %}
+        {% set total_debt = active_loans | sum(attribute='amount') %}
+        <h2
+            style="font-size: 4rem; font-weight: 900; letter-spacing: -2px; color: #111111; line-height: 1; margin: 0.25rem 0;">
+            ${{ "%.2f"|format(total_debt * 1.05) }}</h2>
+        <p class="font-bold" style="color: rgba(17,17,17,0.7); font-size: 1.1rem; margin: 0;">Includes 5% interest</p>
+        {% else %}
+        <h2
+            style="font-size: 4rem; font-weight: 900; letter-spacing: -2px; color: #111111; line-height: 1; margin: 0.25rem 0;">
+            $0.00</h2>
+        <p class="font-bold" style="color: rgba(17,17,17,0.7); font-size: 1.1rem; margin: 0;">No active debt</p>
+        {% endif %}
+    </div>
+
+    <!-- Right Side Elements -->
+    <div
+        style="display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; align-self: stretch; position: relative; z-index: 2;">
+        <!-- Secure badge removed as requested -->
+        <a href="#requestLoanForm"
+            style="width: 72px; height: 72px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 2.5rem; box-shadow: 0 8px 20px rgba(0,0,0,0.1); margin-top: auto; margin-bottom: -0.5rem; margin-right: -0.5rem; transition: transform 0.2s;">
+            <i class="ri-arrow-down-line" style="font-weight: 900;"></i>
+        </a>
+    </div>
+</div>
+
+<!-- Tabs Simulation -->
+<div style="display: flex; gap: 1rem; justify-content: space-between; margin-bottom: 2rem; align-items: center;">
+    <a href="#"
+        style="flex: 1; text-align: center; color: var(--text-secondary); font-weight: 600; font-size: 0.9rem; padding: 0.75rem 0; text-decoration: none; border-radius: 12px; transition: background 0.2s, color 0.2s;"
+        onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='white'"
+        onmouseout="this.style.background='transparent'; this.style.color='var(--text-secondary)'">
+        Debtors
+    </a>
+    <a href="#"
+        style="flex: 1; text-align: center; color: var(--text-secondary); font-weight: 600; font-size: 0.9rem; padding: 0.75rem 0; text-decoration: none; border-radius: 12px; transition: background 0.2s, color 0.2s; background: rgba(255,255,255,0.1); color: white;"
+        onmouseover="this.style.background='rgba(255,255,255,0.15)'"
+        onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+        Requests
+    </a>
+    <a href="#"
+        style="flex: 1; text-align: center; background: var(--primary); color: #121212; border-radius: 999px; font-weight: 800; font-size: 0.9rem; padding: 0.75rem 0; text-decoration: none; transition: filter 0.2s;"
+        onmouseover="this.style.filter='brightness(1.1)'" onmouseout="this.style.filter='none'">
+        My offers
+    </a>
+</div>
+
+<!-- Loan List -->
+<div style="display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem;">
+    {% if loans %}
+    {% for loan in loans %}
+    <div class="card card-dark"
+        style="padding: 1.5rem; border-radius: 24px; position: relative; border: 1px solid rgba(255,255,255,0.05);">
+        <!-- Top header -->
+        <div class="flex justify-between items-start mb-4">
+            <div class="flex items-center gap-3">
+                <div
+                    style="width: 48px; height: 48px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; color: #8ED400; font-weight: 900; font-size: 1.25rem;">
+                    {{ user.name[0]|upper }}
+                </div>
+                <div style="line-height: 1.2;">
+                    <div style="font-weight: 800; font-size: 1.1rem; color: white;">{{ user.name }}</div>
+                    <div class="text-xs" style="color: rgba(255,255,255,0.6);">ID #{{ loan.loan_id[:4] }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center mb-6"
+            style="padding-bottom: 1.5rem; border-bottom: 1px dashed rgba(255,255,255,0.1);">
+            <div class="text-sm" style="color: rgba(255,255,255,0.8); font-weight: 600;">Contract ID: <span
+                    style="font-family: monospace; letter-spacing: 1px; color: white;">{{ loan.loan_id[:8]|upper
+                    }}</span></div>
+            {% if loan.status == 'Pending' %}
+            <div
+                style="background: white; color: #F59E0B; font-weight: 800; font-size: 0.7rem; padding: 0.3rem 0.75rem; border-radius: 999px; letter-spacing: 1px;">
+                PENDING</div>
+            {% else %}
+            <div
+                style="background: white; color: #2DBD74; font-weight: 800; font-size: 0.7rem; padding: 0.3rem 0.75rem; border-radius: 999px; letter-spacing: 1px; text-transform: uppercase;">
+                {{ loan.status }}</div>
+            {% endif %}
+        </div>
+
+        <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+            <div class="text-center" style="display: flex; flex-direction: column; gap: 0.25rem; align-items: center;">
+                <i class="ri-flashlight-line mb-1" style="font-size: 1.25rem; color: white;"></i>
+                <div class="text-xs font-bold" style="color: rgba(255,255,255,0.7);">{{ loan.purpose }}</div>
+            </div>
+            <div class="text-center" style="display: flex; flex-direction: column; gap: 0.25rem; align-items: center;">
+                <i class="ri-money-dollar-circle-line mb-1" style="font-size: 1.25rem; color: white;"></i>
+                <div class="font-bold text-sm" style="color: white; font-size: 1rem;">${{ "%.2f"|format(loan.amount) }}
+                </div>
+            </div>
+            <div class="text-center" style="display: flex; flex-direction: column; gap: 0.25rem; align-items: center;">
+                <i class="ri-calendar-event-line mb-1" style="font-size: 1.25rem; color: white;"></i>
+                <div class="text-xs font-bold" style="color: rgba(255,255,255,0.7);">{{ loan.payback_period }}</div>
+            </div>
+        </div>
+
+        <button class="btn btn-full"
+            style="background: #2DBD74; color: white; padding: 1rem; border-radius: 16px; font-weight: 800; font-size: 1rem; display: flex; justify-content: center; gap: 0.5rem; align-items: center; border: none; cursor: pointer;">
+            Details <i class="ri-search-line"></i>
+        </button>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="card text-center text-secondary py-4">
+        <i class="ri-file-list-line text-3xl mb-2"></i>
+        <p>You have no loan history.</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Request a New Loan Form -->
+<h3 class="font-bold text-lg mb-3" id="requestLoanForm">Request a Loan</h3>
+<div class="card">
+    <form action="{{ url_for('bank.loans') }}" method="POST">
+        <div class="form-group">
+            <label class="form-label">Loan amount</label>
+            <div style="position: relative; display: flex; align-items: center;">
+                <div style="position: absolute; left: 1.25rem; color: var(--success); font-size: 1.25rem;"><i
+                        class="ri-money-dollar-circle-fill"></i></div>
+                <input type="number" name="amount" class="form-control" placeholder="$0.00" step="0.01" min="10"
+                    required style="padding-left: 3rem; font-weight: bold;">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Purpose</label>
+            <select name="purpose" class="form-control" style="appearance: none; cursor: pointer;">
+                <option value="Car repair">Car repair</option>
+                <option value="Electricity">Electricity</option>
+                <option value="Medical">Medical</option>
+                <option value="Education">Education</option>
+                <option value="Other">Other</option>
+            </select>
+            <i class="ri-arrow-down-s-line"
+                style="position: absolute; right: 2rem; margin-top: -30px; color: var(--text-secondary); pointer-events: none;"></i>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Payback period</label>
+            <select name="payback_period" class="form-control" style="appearance: none; cursor: pointer;">
+                <option value="1 Week">1 Week</option>
+                <option value="1 Month">1 Month</option>
+                <option value="3 Months">3 Months</option>
+                <option value="6 Months">6 Months</option>
+            </select>
+            <i class="ri-arrow-down-s-line"
+                style="position: absolute; right: 2rem; margin-top: -30px; color: var(--text-secondary); pointer-events: none;"></i>
+        </div>
+
+        <div
+            style="display: flex; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 1rem; margin-bottom: 1.5rem; font-size: 0.875rem;">
+            <span class="text-secondary">Platform interest rate</span>
+            <span class="font-bold">5%</span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full">
+            Submit request
+        </button>
+    </form>
+</div>
+<br><br>
+{% endblock %}

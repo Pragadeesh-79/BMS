@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Secure Bank - Premium Banking{% endblock %}</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+
+<body data-theme="light">
+    <!-- Initialization script for dark mode to prevent flash -->
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.body.setAttribute('data-theme', 'dark');
+        } else {
+            document.body.setAttribute('data-theme', 'light');
+        }
+    </script>
+
+    <nav class="navbar">
+        <a href="{{ url_for('bank.index') }}" class="nav-brand">
+            <i class="ri-leaf-line"></i> Secure<span>Bank</span>
+        </a>
+
+        <div class="nav-links">
+            <button id="themeToggle" class="btn"
+                style="background: transparent; color: white; padding: 0.5rem; font-size: 1.25rem;">
+                <i class="ri-moon-line" id="themeIcon"></i>
+            </button>
+            <div class="desktop-nav">
+                {% if session.get('user_email') %}
+                <a href="{{ url_for('bank.dashboard') }}"
+                    class="desktop-nav-link {{ 'active' if request.endpoint == 'bank.dashboard' else '' }}">Home</a>
+                <a href="{{ url_for('bank.transactions') }}"
+                    class="desktop-nav-link {{ 'active' if request.endpoint == 'bank.transactions' else '' }}">History</a>
+                <a href="{{ url_for('bank.loans') }}"
+                    class="desktop-nav-link {{ 'active' if request.endpoint == 'bank.loans' else '' }}">Lending</a>
+                <a href="{{ url_for('auth.logout') }}" class="desktop-nav-link" style="color: #FF5A5F;">Logout</a>
+                {% endif %}
+            </div>
+            {% if session.get('user_email') %}
+            <div class="nav-item" style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 0.85rem; opacity: 0.9;">Hello, {{ session.get('user_name').split(' ')[0]
+                    }}</span>
+                <div
+                    style="width: 36px; height: 36px; border-radius: 50%; background: white; color: var(--primary-dark); display: flex; align-items: center; justify-content: center; font-weight: 700; border: 2px solid var(--primary-light);">
+                    {{ session.get('user_name')[0] | upper }}
+                </div>
+            </div>
+            {% else %}
+            <a href="{{ url_for('auth.login') }}" class="nav-item">Login</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Flash Messages Container -->
+    <div class="alerts-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}" onclick="this.style.display='none'">
+            <span>{{ message }}</span>
+            <i class="ri-close-line" style="cursor: pointer; opacity: 0.6;"></i>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="app-container">
+        <main class="main-content">
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+
+    {% if session.get('user_email') %}
+    <!-- Bottom Mobile App Style Navigation -->
+    <nav class="bottom-nav">
+        <a href="{{ url_for('bank.dashboard') }}"
+            class="bottom-nav-item {{ 'active' if request.endpoint == 'bank.dashboard' else '' }}">
+            <i class="ri-home-5-line"></i>
+            <span>Home</span>
+        </a>
+        <a href="{{ url_for('bank.transactions') }}"
+            class="bottom-nav-item {{ 'active' if request.endpoint == 'bank.transactions' else '' }}">
+            <i class="ri-history-line"></i>
+            <span>History</span>
+        </a>
+        <div style="width: 64px;"></div> <!-- Spacer for FAB -->
+        <a href="{{ url_for('bank.loans') }}"
+            class="bottom-nav-item {{ 'active' if request.endpoint == 'bank.loans' else '' }}">
+            <i class="ri-funds-box-line"></i>
+            <span>Lending</span>
+        </a>
+        <a href="{{ url_for('auth.logout') }}" class="bottom-nav-item text-danger" style="margin-top: 3px;">
+            <i class="ri-logout-box-r-line"></i>
+            <span>Logout</span>
+        </a>
+    </nav>
+
+    <!-- Floating Action Button for Transfer Menu -->
+    <a href="{{ url_for('bank.transfer') }}" class="fab" title="Send Money">
+        <i class="ri-send-plane-fill"></i>
+    </a>
+    {% endif %}
+
+    <script>
+        // Auto-dismiss alerts after 5 seconds
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 300);
+            });
+        }, 5000);
+
+        // Dark Mode Logic
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+
+        function updateThemeIcon() {
+            if (document.body.getAttribute('data-theme') === 'dark') {
+                themeIcon.className = 'ri-sun-line';
+            } else {
+                themeIcon.className = 'ri-moon-line';
+            }
+        }
+
+        // Initial icon update
+        updateThemeIcon();
+
+        themeToggle.addEventListener('click', () => {
+            if (document.body.getAttribute('data-theme') === 'dark') {
+                document.body.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+            updateThemeIcon();
+        });
+    </script>
+</body>
+
+</html>

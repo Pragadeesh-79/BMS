@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 70vh; gap: 4rem;">
+    <div style="flex: 1;">
+        <div class="badge badge-success mb-4" style="display: inline-block;">New & Improved</div>
+        <h1 class="text-3xl font-bold mb-4" style="font-size: 3.5rem; line-height: 1.2;">
+            Banking <br> <span class="text-success">Reimagined.</span>
+        </h1>
+        <p class="mb-4 text-xl" style="color: var(--text-secondary); max-width: 500px;">
+            Experience the future of digital banking. Fast transfers, real-time alerts, and complete control over your
+            money.
+        </p>
+        <div class="flex gap-4 mt-4">
+            <a href="{{ url_for('auth.register') }}" class="btn btn-primary"
+                style="padding: 1rem 2rem; font-size: 1.1rem;">
+                Open Free Account <i class="ri-arrow-right-line"></i>
+            </a>
+        </div>
+
+        <div class="flex gap-4 mt-4" style="margin-top: 3rem;">
+            <div>
+                <h3 class="font-bold text-2xl">0 Fees</h3>
+                <p class="text-sm">On standard transfers</p>
+            </div>
+            <div style="width: 1px; background: var(--border);"></div>
+            <div>
+                <h3 class="font-bold text-2xl">24/7</h3>
+                <p class="text-sm">Instant Processing</p>
+            </div>
+        </div>
+    </div>
+
+    <div style="flex: 1; position: relative;">
+        <!-- Abstract Dashboard Mockup -->
+        <div class="card"
+            style="background: linear-gradient(145deg, var(--card-bg), #0f172a); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); transform: perspective(1000px) rotateY(-15deg) rotateX(5deg); position: relative; z-index: 10;">
+            <div class="flex justify-between items-center mb-4">
+                <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 50%; opacity: 0.8;">
+                </div>
+                <div style="width: 100px; height: 10px; background: var(--border); border-radius: 5px;"></div>
+            </div>
+            <h2 class="text-3xl font-bold mb-1">$ 12,450.00</h2>
+            <p class="text-success text-sm mb-4"><i class="ri-arrow-up-line"></i> +2.4% this week</p>
+
+            <div class="card mb-3" style="background: rgba(255,255,255,0.05); border: none;">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <div
+                            style="width: 30px; height: 30px; background: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <i class="ri-arrow-right-up-line text-xs text-white"></i></div>
+                        <div>
+                            <div class="font-bold" style="font-size: 14px;">Apple Store</div>
+                            <div class="text-xs" style="color: var(--text-secondary);">Today, 14:30</div>
+                        </div>
+                    </div>
+                    <div class="font-bold text-danger">-$1,299.00</div>
+                </div>
+            </div>
+
+            <div class="card" style="background: rgba(255,255,255,0.05); border: none;">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <div
+                            style="width: 30px; height: 30px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <i class="ri-arrow-left-down-line text-xs text-white"></i></div>
+                        <div>
+                            <div class="font-bold" style="font-size: 14px;">Salary Deposit</div>
+                            <div class="text-xs" style="color: var(--text-secondary);">Yesterday</div>
+                        </div>
+                    </div>
+                    <div class="font-bold text-success">+$4,500.00</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decorative blobs -->
+        <div
+            style="position: absolute; top: -50px; right: -50px; width: 300px; height: 300px; background: var(--primary); filter: blur(100px); opacity: 0.3; z-index: 1;">
+        </div>
+        <div
+            style="position: absolute; bottom: -50px; left: -50px; width: 300px; height: 300px; background: var(--success); filter: blur(100px); opacity: 0.2; z-index: 1;">
+        </div>
+    </div>
+</div>
+{% endblock %}

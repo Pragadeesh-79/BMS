@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="auth-container" style="padding: 2rem 0;">
+    <div class="card auth-card">
+        <div class="auth-header">
+            <h1>Create Account</h1>
+            <p>Join Secure Bank today and take control of your finances</p>
+        </div>
+
+        <form action="{{ url_for('auth.register') }}" method="POST">
+            <div class="form-group">
+                <label for="name" class="form-label">Full Name</label>
+                <input type="text" id="name" name="name" class="form-control" placeholder="John Doe" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" id="email" name="email" class="form-control" placeholder="john@example.com"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone" class="form-label">Phone Number</label>
+                <input type="tel" id="phone" name="phone" class="form-control" placeholder="+1 (555) 000-0000" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" name="password" class="form-control"
+                    placeholder="Create a strong password" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full mt-2">Create Account <i
+                    class="ri-user-add-line"></i></button>
+        </form>
+
+        <div class="text-center mt-4">
+            <p class="text-sm">Already have an account? <a href="{{ url_for('auth.login') }}" class="font-bold">Sign
+                    in</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
