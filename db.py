@@ -6,16 +6,19 @@ load_dotenv()
 
 MONGO_URI = os.environ.get('MONGO_URI')
 
-try:
-    if MONGO_URI:
-        # Use a more resilient client initialization without blocking pings on import
-        mongo_client = MongoClient(MONGO_URI, connectTimeoutMS=5000, socketTimeoutMS=5000)
-        db = mongo_client.get_database()
-        print("MongoDB Atlas client initialized.")
-    else:
-        raise ValueError("MONGO_URI environment variable is missing.")
-except Exception as e:
-    print(f"MongoDB Initialization Warning: {e}")
-    # Fallback to local only as absolute last resort
-    mongo_client = MongoClient('mongodb://localhost:27017/', serverSelectionTimeoutMS=2000)
-    db = mongo_client['banking_db']
+# Global db object initialized as None
+_db = None
+
+def get_db():
+    global _db
+    if _db is None:
+        if not MONGO_URI:
+            print("CRITICAL: MONGO_URI is missing!")
+            # Fallback to local only for local devs, but on Vercel this will likely fail
+            client = MongoClient('mongodb://localhost:27017/', serverSelectionTimeoutMS=1000)
+            _db = client['banking_db']
+        else:
+            print("Initializing MongoDB Atlas connection...")
+            client = MongoClient(MONGO_URI, connectTimeoutMS=5000, socketTimeoutMS=5000)
+            _db = client.get_database() 
+    return _db

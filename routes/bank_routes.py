@@ -7,10 +7,7 @@ from utils.email_service import send_transaction_email
 
 bank_bp = Blueprint('bank', __name__)
 
-from db import db
-user_model = UserModel(db)
-transaction_model = TransactionModel(db)
-loan_model = LoanModel(db)
+from db import get_db
 
 @bank_bp.route('/')
 def index():
@@ -21,6 +18,10 @@ def index():
 @bank_bp.route('/dashboard')
 @login_required
 def dashboard():
+    db = get_db()
+    user_model = UserModel(db)
+    transaction_model = TransactionModel(db)
+    
     account_number = session.get('account_number')
     user = user_model.find_by_account_number(account_number)
     
@@ -35,6 +36,10 @@ def dashboard():
 @bank_bp.route('/transfer', methods=['GET', 'POST'])
 @login_required
 def transfer():
+    db = get_db()
+    user_model = UserModel(db)
+    transaction_model = TransactionModel(db)
+    
     if request.method == 'GET':
         account_number = session.get('account_number')
         user = user_model.find_by_account_number(account_number)

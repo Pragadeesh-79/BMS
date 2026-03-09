@@ -4,14 +4,12 @@ from utils.email_service import send_welcome_email
 
 auth_bp = Blueprint('auth', __name__)
 
-# Note: We'll initialize user_model in the routes files or pass db from app
-# Let's import the db connection here.
-from db import db
-
-user_model = UserModel(db)
+from db import get_db
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
+    db = get_db()
+    user_model = UserModel(db)
     if request.method == 'GET':
         return render_template('signup.html')
         
@@ -40,6 +38,9 @@ def login():
     if request.method == 'GET':
         return render_template('login.html')
         
+    db = get_db()
+    user_model = UserModel(db)
+    
     email = request.form.get('email')
     password = request.form.get('password')
 
