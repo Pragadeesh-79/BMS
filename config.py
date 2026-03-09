@@ -7,7 +7,7 @@ load_dotenv()
 class Config:
     # Flask Session / Security
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-default'
-    SESSION_TYPE = 'filesystem'
+    SESSION_TYPE = None
     
     # MongoDB
     MONGO_URI = os.environ.get('MONGO_URI')

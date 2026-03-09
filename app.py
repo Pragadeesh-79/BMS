@@ -8,12 +8,8 @@ import os
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# Ensure session directory exists
-if not os.path.exists('flask_session'):
-    os.makedirs('flask_session')
-
-# Initialize Session
-Session(app)
+# Session initialization - Vercel compatible (Standard Cookies)
+# Session(app) is not needed if SESSION_TYPE is None as Flask handles it natively
 
 # Import db just for consistency (already initialized in db.py)
 from db import db, mongo_client
