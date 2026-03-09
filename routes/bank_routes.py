@@ -93,6 +93,10 @@ def transfer():
 @bank_bp.route('/deposit', methods=['GET', 'POST'])
 @login_required
 def deposit():
+    db = get_db()
+    user_model = UserModel(db)
+    transaction_model = TransactionModel(db)
+    
     account_number = session.get('account_number')
     user = user_model.find_by_account_number(account_number)
     
@@ -127,6 +131,10 @@ def deposit():
 @bank_bp.route('/transactions')
 @login_required
 def transactions():
+    db = get_db()
+    user_model = UserModel(db)
+    transaction_model = TransactionModel(db)
+    
     account_number = session.get('account_number')
     user = user_model.find_by_account_number(account_number)
     all_transactions = transaction_model.get_user_transactions(account_number)
@@ -136,6 +144,11 @@ def transactions():
 @bank_bp.route('/loans', methods=['GET', 'POST'])
 @login_required
 def loans():
+    db = get_db()
+    user_model = UserModel(db)
+    loan_model = LoanModel(db)
+    transaction_model = TransactionModel(db) # Added for record keeping below
+    
     account_number = session.get('account_number')
     user = user_model.find_by_account_number(account_number)
     
