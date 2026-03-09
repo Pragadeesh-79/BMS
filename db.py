@@ -8,16 +8,14 @@ MONGO_URI = os.environ.get('MONGO_URI')
 
 try:
     if MONGO_URI:
-        mongo_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=2000)
-        # Verify connection
-        mongo_client.admin.command('ping')
-        db = mongo_client.get_database() # Gets default database from URI
-        print("Successfully connected to MongoDB Atlas.")
+        # Use a more resilient client initialization without blocking pings on import
+        mongo_client = MongoClient(MONGO_URI, connectTimeoutMS=5000, socketTimeoutMS=5000)
+        db = mongo_client.get_database()
+        print("MongoDB Atlas client initialized.")
     else:
-        raise ValueError("MONGO_URI is empty")
+        raise ValueError("MONGO_URI environment variable is missing.")
 except Exception as e:
-    print(f"Error connecting to MongoDB Atlas: {e}")
-    # Fallback to local db for development purposes to avoid instant crash if not set
-    mongo_client = MongoClient('mongodb://localhost:27017/')
+    print(f"MongoDB Initialization Warning: {e}")
+    # Fallback to local only as absolute last resort
+    mongo_client = MongoClient('mongodb://localhost:27017/', serverSelectionTimeoutMS=2000)
     db = mongo_client['banking_db']
-    print("Falling back to local MongoDB mongodb://localhost:27017/banking_db")

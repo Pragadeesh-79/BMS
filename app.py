@@ -1,29 +1,28 @@
-from flask import Flask
+from flask import Flask, jsonify
 from config import Config
-from pymongo import MongoClient
-from flask_session import Session
 import os
 
 # Initialize Flask app
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# Session initialization - Vercel compatible (Standard Cookies)
-# Session(app) is not needed if SESSION_TYPE is None as Flask handles it natively
+# Standard Flask Cookie Session (No filesystem needed for Vercel)
 
-# Import db just for consistency (already initialized in db.py)
-from db import db, mongo_client
-
-# To access the collections globally if needed
-users_collection = db['users']
-transactions_collection = db['transactions']
-
-# Import blueprints here to avoid circular imports
+# Import db and models
+from db import db
 from routes.auth_routes import auth_bp
 from routes.bank_routes import bank_bp
 
+# Register blueprints
 app.register_blueprint(auth_bp)
 app.register_blueprint(bank_bp)
+
+@app.route('/health')
+def health():
+    return jsonify({"status": "healthy"}), 200
+
+# Vercel requires the app object to be available at the top level
+# which it is here as 'app'.
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
